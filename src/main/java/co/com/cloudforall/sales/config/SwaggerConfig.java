@@ -33,7 +33,7 @@ public class SwaggerConfig {
 	private ApiInfo apiInfo() {
 		ApiInfoBuilder apiInfoBuilder = new ApiInfoBuilder();
 		apiInfoBuilder.title("Sales - Cloud for all REST API");
-		apiInfoBuilder.description("Sales management - Cloud for all");
+		apiInfoBuilder.description("Sales Management - Cloud for all");
 		apiInfoBuilder.version("1.0.0");
 		apiInfoBuilder.license("Version 1");
 		apiInfoBuilder.licenseUrl("https://");
