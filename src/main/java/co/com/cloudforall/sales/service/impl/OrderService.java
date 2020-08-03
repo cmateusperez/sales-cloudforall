@@ -1,13 +1,13 @@
 package co.com.cloudforall.sales.service.impl;
 
-import java.text.DecimalFormat;
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import co.com.cloudforall.sales.repository.DeliverySiteRepository;
 import co.com.cloudforall.sales.repository.OrderDetailRepository;
 import co.com.cloudforall.sales.repository.OrderRepository;
 import co.com.cloudforall.sales.repository.PreOrderRepository;
@@ -20,7 +20,9 @@ import co.com.cloudforall.sales.repository.entity.Product;
 import co.com.cloudforall.sales.service.IOrderService;
 import co.com.cloudforall.sales.service.domain.OrderRequest;
 import co.com.cloudforall.sales.service.domain.OrderResponse;
+import co.com.cloudforall.sales.util.Constants;
 import co.com.cloudforall.sales.util.exception.ResourceNotFoundException;
+import co.com.cloudforall.sales.util.mapper.OrderMapper;
 
 @Service
 public class OrderService implements IOrderService {
@@ -37,40 +39,55 @@ public class OrderService implements IOrderService {
 	@Autowired
 	ProductRepository productRepository;
 
-	@Override
-	public OrderResponse add(OrderRequest orderRequest) {
+	@Autowired
+	private DeliverySiteRepository deliverySiteRepository;
 
-		PreOrder preOrder = preOrderRepository.findById(orderRequest.getIdPreOrder())
-				.orElseThrow(() -> new ResourceNotFoundException("", "", null));
-		Product product = productRepository.findById(orderRequest.getIdProducto())
-				.orElseThrow(() -> new ResourceNotFoundException("", "", null));
-		DeliverySite deliverySiteDefault = DeliverySite.builder().id(1).build();
-		Order order = Order.builder().deliverySite(deliverySiteDefault).idInvoice(UUID.randomUUID()).preOrder(preOrder)
-				.build();
-		Order orderSaved = orderRepository.save(order);
-		OrderDetail orderDetail = OrderDetail.builder().order(orderSaved).product(product)
-				.quantity(orderRequest.getQuantity()).build();
-		orderDetailRepository.save(orderDetail);
-		String totalPurchases = getTotalPurchases(product.getPrice(), orderRequest.getQuantity());
-		OrderResponse orderResponse = OrderResponse.builder().idInvoice(orderSaved.getIdInvoice().toString())
-				.deliverySite(orderSaved.getDeliverySite().getName()).date(LocalDateTime.now())
-				.totalPurchases(totalPurchases).build();
-		return orderResponse;
-	}
-
-	private String getTotalPurchases(Double price, Integer quantity) {
-		Double totalPurchase = price * quantity;
-		return formatCurrency(totalPurchase);
-	}
-
-	private String formatCurrency(Double value) {
-		DecimalFormat dFormat = new DecimalFormat("####,###,###.00");
-		return "$" + dFormat.format(value);
-	}
+	@Autowired
+	private OrderMapper orderMapper;
 
 	@Override
 	public List<OrderResponse> getAll() {
-		return null;
+		return orderMapper.ordersToOrderResponse(orderRepository.findAll());
+	}
+
+	@Override
+	public OrderResponse add(OrderRequest orderRequest) {
+		PreOrder preOrder = queryPreOrder(orderRequest);
+		Product product = queryProduct(orderRequest);
+		DeliverySite deliverySiteDefault = queryDeliverySite();
+		Order order = createOrUpdateOrder(orderRequest, preOrder, product, deliverySiteDefault);
+		return orderMapper.ordertToOrderResponse(order);
+	}
+
+	private DeliverySite queryDeliverySite() {
+		return deliverySiteRepository.findById(1).orElseThrow();
+	}
+
+	private Order createOrUpdateOrder(OrderRequest orderRequest, PreOrder preOrder, Product product,
+			DeliverySite deliverySiteDefault) {
+		Order order = queryOrder(preOrder).orElse(Order.builder().deliverySite(deliverySiteDefault)
+				.idInvoice(UUID.randomUUID()).preOrder(preOrder).build());
+		OrderDetail orderDetail = OrderDetail.builder().order(order).product(product)
+				.quantity(orderRequest.getQuantity()).build();
+		order.addDetail(orderDetail);
+		orderRepository.save(order);
+		return order;
+	}
+
+	private Optional<Order> queryOrder(PreOrder preOrder) {
+		return orderRepository.findByPreOrderId(preOrder.getId());
+	}
+
+	private Product queryProduct(OrderRequest orderRequest) {
+		Product product = productRepository.findById(orderRequest.getIdProduct()).orElseThrow(
+				() -> new ResourceNotFoundException(Constants.PRODUCT, Constants.ID, orderRequest.getIdProduct()));
+		return product;
+	}
+
+	private PreOrder queryPreOrder(OrderRequest orderRequest) {
+		PreOrder preOrder = preOrderRepository.findById(orderRequest.getIdPreOrder()).orElseThrow(
+				() -> new ResourceNotFoundException(Constants.PRE_ORDER, Constants.ID, orderRequest.getIdPreOrder()));
+		return preOrder;
 	}
 
 }

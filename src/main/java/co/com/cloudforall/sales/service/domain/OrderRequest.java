@@ -21,7 +21,7 @@ public class OrderRequest {
 
 	@ApiModelProperty(value = "Order id product")
 	@JsonInclude(Include.NON_NULL)
-	private Integer idProducto;
+	private Integer idProduct;
 
 	@ApiModelProperty(value = "Order id product")
 	@JsonInclude(Include.NON_NULL)

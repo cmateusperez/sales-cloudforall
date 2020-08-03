@@ -22,8 +22,10 @@ public class SalesApplication {
 	@Bean
 	CommandLineRunner init(ProductRepository productRepository, DeliverySiteRepository deliverySiteRepository, PreOrderRepository preOrderRepository) {
 		return args -> {
-			Product product = new Product(1, "Arnes industrial", "Ajustable y resistente hasta 90 kg", 600000D);
-			productRepository.save(product);
+			Product firstProduct = new Product(1, "Arnes industrial", "Ajustable y resistente hasta 90 kg", 600000D);
+			productRepository.save(firstProduct);
+			Product secondProduct = new Product(2, "Careta Ajustable", "Ajustable y resistente hasta 90 kg", 90000D);
+			productRepository.save(secondProduct);
 			DeliverySite deliverySite = new DeliverySite(1, "Bodega 1 Central - Km 3 Via La Florida");
 			deliverySiteRepository.save(deliverySite);
 			PreOrder preOrder = new PreOrder(1, "Preventa artículo para industrias generales 20-07-2020");

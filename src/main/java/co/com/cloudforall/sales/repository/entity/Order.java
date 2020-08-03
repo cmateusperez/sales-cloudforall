@@ -1,8 +1,10 @@
 package co.com.cloudforall.sales.repository.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -33,12 +35,19 @@ public class Order {
 	@Column(name = "id_invoice")
 	private UUID idInvoice;
 
-	@ManyToOne()
+	@ManyToOne(cascade = CascadeType.ALL)
 	private DeliverySite deliverySite;
 
 	@OneToOne()
 	private PreOrder preOrder;
 	
-	@OneToMany ( mappedBy = "order")
+	@OneToMany ( mappedBy = "order", cascade = CascadeType.ALL)
 	private List<OrderDetail> orderDetails;
+	
+	public void addDetail(OrderDetail detail) {
+		if(orderDetails == null) {
+			orderDetails = new ArrayList<OrderDetail>();
+		}
+		orderDetails.add(detail);
+	}
 }
