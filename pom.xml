@@ -103,7 +103,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-					<mainClass>co.vom.cloudforall.sales.SalesApplication</mainClass>
+					<mainClass>co.com.cloudforall.sales.SalesApplication</mainClass>
 				</configuration>
 
 				<executions>
