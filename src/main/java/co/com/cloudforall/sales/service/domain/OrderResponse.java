@@ -1,5 +1,7 @@
 package co.com.cloudforall.sales.service.domain;
 
+import java.time.LocalDateTime;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -13,22 +15,21 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductDTO {
+public class OrderResponse {
 
-	@ApiModelProperty(value = "Product id")
+	@ApiModelProperty(value = "Order id invoice")
 	@JsonInclude(Include.NON_NULL)
-	private Integer id;
+	private String idInvoice;
 
-	@ApiModelProperty(value = "Product name")
+	@ApiModelProperty(value = "Product delivery site")
 	@JsonInclude(Include.NON_NULL)
-	private String name;
+	private String deliverySite;
 
-	@ApiModelProperty(value = "Product description")
+	@ApiModelProperty(value = "Order preorder")
 	@JsonInclude(Include.NON_NULL)
-	private String description;
-	
-	@ApiModelProperty(value = "Product price")
-	@JsonInclude(Include.NON_NULL)
-	private Double price;
+	private String totalPurchases;
 
+	@ApiModelProperty(value = "Order date")
+	@JsonInclude(Include.NON_NULL)
+	private LocalDateTime date;
 }

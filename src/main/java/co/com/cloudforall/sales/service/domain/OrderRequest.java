@@ -13,22 +13,18 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductDTO {
+public class OrderRequest {
 
-	@ApiModelProperty(value = "Product id")
+	@ApiModelProperty(value = "Order preorder")
 	@JsonInclude(Include.NON_NULL)
-	private Integer id;
+	private Integer idPreOrder;
 
-	@ApiModelProperty(value = "Product name")
+	@ApiModelProperty(value = "Order id product")
 	@JsonInclude(Include.NON_NULL)
-	private String name;
+	private Integer idProducto;
 
-	@ApiModelProperty(value = "Product description")
+	@ApiModelProperty(value = "Order id product")
 	@JsonInclude(Include.NON_NULL)
-	private String description;
-	
-	@ApiModelProperty(value = "Product price")
-	@JsonInclude(Include.NON_NULL)
-	private Double price;
+	private Integer quantity;
 
 }
